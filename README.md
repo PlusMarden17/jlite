@@ -6,7 +6,12 @@ JLite це простий кодовий редактор для Java
 1. Створення/Відкриття/Збереження файлів
 2. Попередження
 3. Підсвітка синтаксису
+   
+В розробці:
+1. Запуск файлів
+2. Компіляція файлів
+3. Перемикання між світлою та темною темою
 
-<img width="985" height="740" alt="image" src="https://github.com/user-attachments/assets/ead26dba-290b-474f-a20a-b4d86222c4c3" />
+<img width="980" height="740" alt="image" src="https://github.com/user-attachments/assets/06820859-5fca-4280-9f2c-903ecda116ae" />
 
 *(приклад коду і попередження про незбережений файл)*
