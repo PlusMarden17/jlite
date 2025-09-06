@@ -7,17 +7,30 @@ import java.awt.Desktop;
 import java.net.URI;
 import java.net.URISyntaxException;
 import io.coconut.jlite.files.Files;
+import io.coconut.jlite.files.Build;
 import java.io.IOException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Theme;
 
 public class UI extends JFrame implements ActionListener {
     private RSyntaxTextArea txt = new RSyntaxTextArea();
+    private boolean isSaved = false;
 
     public UI() {
         initializeUI();
     }
 
     private void initializeUI() {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
         setTitle("untitled - JLite");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,12 +38,19 @@ public class UI extends JFrame implements ActionListener {
         txt.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
         JScrollPane scroller = new JScrollPane(txt);
         add(scroller);
+        try {
+            Theme theme = Theme.load(getClass().getResourceAsStream(
+                    "/org/fife/ui/rsyntaxtextarea/themes/monokai.xml"));
+            theme.apply(txt);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        String[] titles = {"File", "About"};
-        String[][] elements = {{"New", "Open", "Save"}, {"Info", "Github"}};
+        String[] titles = {"File", "Build", "About"};
+        String[][] elements = {{"New", "Open", "Save"}, {"Run", "Compile"}, {"Info", "Github"}};
 
         for(int i = 0; i < titles.length; i++) {
             String title = titles[i];
@@ -58,8 +78,8 @@ public class UI extends JFrame implements ActionListener {
         switch(cmd) {
             case "Save":
                 Files.saveFile(txt, this);
+                isSaved = true;
                 break;
-
             case "Open":
                 Files.openFile(txt, this);
                 break;
@@ -68,6 +88,13 @@ public class UI extends JFrame implements ActionListener {
                 handleNewFile();
                 break;
 
+            case "Run":
+                if (isSaved) {
+                    Build.runCode();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Save file before running");
+                }
+                break;
             case "Info":
                 JOptionPane.showMessageDialog(this, "JLite Alpha 0.0.1 Simple Java IDE");
                 break;
